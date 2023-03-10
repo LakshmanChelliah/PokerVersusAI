@@ -5,7 +5,7 @@ This Python script implements a basic Texas Holdem Poker game where the user fac
 To play the game, simply run the poker.py file using Python 3 in the command line:
 The game will then prompt you for input on each turn, asking you to choose between different actions such as calling, raising, or folding. The AI opponent will make its own decisions based on its own algorithm.
 
-#D ependencies
+# Dependencies
 The script uses the following Python packages:
 
 - random for generating random numbers used in shuffling the deck of cards and making decisions
