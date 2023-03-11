@@ -1,17 +1,16 @@
 import random 
 
 
-NUMBER_OF_AI = 2
-STARTING_BALANCE = 100
+
 #user is player 0 
-players = []
+
 table = []
 
 def makeDeck()->list:
     deck = ["2","3","4","5","6","7","8","9","10","J","Q","K","A"]
     symbols = ["♠","♥","♦","♣"]
     
-    finaldeck = [];
+    finaldeck = []
 
     for x in symbols:
         for y in deck:
@@ -23,15 +22,16 @@ def shuffleDeck(deck:list)->list:
     random.shuffle(deck)
     return deck
 
-def dealCards(deck:list):
+def dealCards(deck:list,AIs) -> list:
 
     shuffleDeck(deck)
-
-    for i in range(NUMBER_OF_AI+1):
+    players = []
+    for i in range(AIs+1):
         cards = []
         for j in range(2):
             cards.append(deck.pop())
         players.append(cards)
+    return players
 
 def cardfortable(deck,x:int)->list:
     for i in range(x):
@@ -57,6 +57,8 @@ def checkChances(hand:list, table:list)->int:
     for i in range(len(table)):
         cardsInPlay.append(table[i])
 
+    
+
     #check for straight flush in cardsInPlay
     if checkStraight(cardsInPlay)[0] == True and checkFlush(cardsInPlay)[0] == True and checkFlush(cardsInPlay)[1] == checkStraight(cardsInPlay)[1]:
 
@@ -67,6 +69,7 @@ def checkChances(hand:list, table:list)->int:
         
     #check for four of a kind in cardsInPlay
     elif xOfaKind(cardsInPlay,4)[0] == True:
+        
         return 8
         
     #Check for a full house in cardsInPlay
@@ -95,6 +98,7 @@ def checkChances(hand:list, table:list)->int:
         return 2
     
     elif checkHighCard(cardsInPlay)[1] == 'K' or checkHighCard(cardsInPlay)[1] == 'Q' or checkHighCard(cardsInPlay)[1] == 'J' or checkHighCard(cardsInPlay)[1] == 'A' or checkHighCard(cardsInPlay)[1] == '10':
+
         return 1
     
     else:
@@ -163,7 +167,7 @@ def checkTwoPair(allCards:list)->list:
     return [False,None,None]
 
 def checkFullHouse(allCards:list)->list:
-    temp = allCards
+    temp = allCards.copy()
     result = xOfaKind(temp,3)
     
     if result[0] == True:
@@ -244,31 +248,47 @@ def xOfaKind(allCards:list, x)->list:
 def checkStraight(allCards:list)->list:
     
     sortedValues = sortValuesandNumerize(allCards)
+    
     final = []
     maxCountinaRow = 0
     indexs = []
+   
+    sortedValuesTEMP = list(dict.fromkeys(sortedValues))
+    sortedValues = []
+
+    for i in sortedValuesTEMP:
+        sortedValues.append(int(i))
+    sortedValues.sort()
+    
+
+    
     #loop through sortedValues that finds if there are 5 consecutive incrementing values
     for i in range(len(sortedValues)-1):
         if int(sortedValues[i]) + 1 == int(sortedValues[i+1]):
             maxCountinaRow += 1
             indexs.append(i)
         else:
-            if maxCountinaRow == 4:
-                if sortedValues[indexs[0]] == 1:
-                    for i in range(len(indexs)):
-                        if sortedValues[indexs[i]] == 1:
-                            sortedValues[indexs[i]] == 'A'
-                        final.append(sortedValues[indexs[i]])
-                    final.append(str(int(final[-1])+1 ))
-                    return [True,final]
+            if maxCountinaRow >= 4:
+                #print(indexs)
+                #indexs[indexs[len(indexs)-5],indexs[len(indexs)-4],indexs[len(indexs)-3],indexs[len(indexs)-2],indexs[len(indexs)-1]]
+                for i in range(len(indexs)):
+                    if sortedValues[indexs[i]] == 1:
+                        sortedValues[indexs[i]] = 'A'
+                    final.append(str(sortedValues[indexs[i]]))
+                final.append(str(int(final[-1])+1 ))
+                final = [final[-5],final[-4],final[-3],final[-2],final[-1]]
+                return [True,final]
+            
             maxCountinaRow = 0
             indexs = []
+
     if maxCountinaRow == 4:
         for i in range(len(indexs)):
-            if sortedValues[indexs[i]] == 1:
-                sortedValues[indexs[i]] == 'A'
-            final.append(sortedValues[indexs[i]])
+            if sortedValues[indexs[i]] == '1':
+                sortedValues[indexs[i]] = 'A'
+            final.append(str(sortedValues[indexs[i]]))
         final.append(str(int(final[-1])+1 ))
+        final = [final[-5],final[-4],final[-3],final[-2],final[-1]]
         return [True,final]
     return [False,None]
     
@@ -315,27 +335,13 @@ def checkFlush(allCards:list)->list:
         else:
             return [True, allSameSuit, suit]
 
-    
-       
-        
-    
-
-
-    
-
-
-
-
-
-
-
-
-
-
 if __name__ == "__main__":
 
    
-    print(checkChances(["♠2","♠4"],["♠3","♣A","♠6","♠5","♣K"]))
+    print(checkChances(['♥A','♠6'],[]))
+    #print(checkStraight(["♠6","♣4","♣2","♣A", "♠5","♣K","♠3"]))
+
+    #print(checkStraight(["♠4","♣2","♠3","♣A","♠4","♠5","♣K"]))
 
     #highcard is 1
     #pair is 2
@@ -347,3 +353,5 @@ if __name__ == "__main__":
     #four of a kind is 8
     #straight flush is 9
     #royal flush is 10
+
+    
