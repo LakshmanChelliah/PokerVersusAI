@@ -117,7 +117,7 @@ def checkHighCard(AllCards:list)->list:
             actualValue.append(int(i)) 
             
     actualValue.sort()
-
+    
     
 
     if actualValue[-1] == 11:
