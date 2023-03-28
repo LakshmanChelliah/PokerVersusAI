@@ -1,4 +1,5 @@
 from poker import *
+
 import time
 
 NUMBER_OF_AI = 1
@@ -7,10 +8,10 @@ STARTING_BALANCE = 100
 
 currentPerson = 0
 roundNum = 0
-roundPot = 0
+
 previousBet = 0
 betList = []
-#balanceList = []
+#  balanceList = []
 
 #Increments the  index of the next player in the lists
 def incrementStartingPerson(x)-> int:
@@ -36,24 +37,37 @@ def initBalances()-> list:
     return temp
 
 #function to allow the user to bet
-def bet(index:int, bet:int,betList,balanceLIst,roundPot) -> bool:
+def bet(index:int, bet:int,betList,balanceLIst) -> bool:
     print("bet: " + str(bet))
     if validateBet(index,bet,balanceLIst):
         betList[index] += bet
         previousBet = bet
-        roundPot += bet
+        
         balanceLIst[index] -= bet
         return True
     else:
         return False
+def match(index):
+#code that finds largest number in betList
+    temp = 0
+    for bet in betList:
+        if temp < bet:
+            temp = bet 
     
-    
-def matchPreviousBet(index):
+    return (temp - betList[index])
 
-    betList[index] == previousBet
-    roundPot += previousBet
-    balanceList[index] -= bet
     
+def matchPreviousBet(index, balanceLIst):
+    
+    #betList[index] += match(index)
+   
+    bet(index,match(index),betList,balanceLIst)
+    
+    print("before")
+    #print(balanceLIst[index])
+    balanceLIst[index] -=  match(index)
+    print("after")
+   # print(balanceLIst[index])
     
 def getPreviousWager(index):
     if index == 0:
@@ -84,6 +98,8 @@ def fold(index)->bool:
     betList[index] = -1
 
 
+
+
 if __name__ == "__main__":
 
     deck = makeDeck()
@@ -105,58 +121,70 @@ if __name__ == "__main__":
         print("Stand")
 
 
-    def actionBasedOnHand(chance, index, odds):
+    def actionBasedOnHand(chance, index, odds,balanceList):
         if chance == 10:
             if odds >=0:
-                bet(index, random.randint(0,20),betList,balanceList,roundPot)
+                matchPreviousBet(index,balanceList)
+                bet(index, random.randint(0,20),betList,balanceList)
         elif chance == 9:
             if odds >=1:
-                bet(index, random.randint(0,20),betList,balanceList,roundPot)
+                matchPreviousBet(index,balanceList)
+                bet(index, random.randint(0,20),betList,balanceList)
             else:
                 standOrFold(index)
         elif chance == 8:
             if odds >=1:
-                bet(index, random.randint(0,20),betList,balanceList,roundPot)
+                matchPreviousBet(index,balanceList)
+                bet(index, random.randint(0,20),betList,balanceList)
             else:
                 standOrFold(index)
         elif chance == 7:
             if odds >=1:
-                bet(index, random.randint(0,20),betList,balanceList,roundPot)
+                matchPreviousBet(index,balanceList)
+                bet(index, random.randint(0,20),betList,balanceList)
             else:
                 standOrFold(index)
         elif chance == 6:
             if odds >=1:
-                bet(index, random.randint(0,20),betList,balanceList,roundPot)
+                matchPreviousBet(index,balanceList)
+                bet(index, random.randint(0,20),betList,balanceList)
             else:
                 standOrFold(index)
         elif chance == 5:
             if odds >=1:
-                bet(index, random.randint(0,20),betList,balanceList,roundPot)
+                matchPreviousBet(index,balanceList)
+                bet(index, random.randint(0,20),betList,balanceList)
             else:
                 standOrFold(index)
         elif chance == 4:
             if odds >=2:
-                bet(index, random.randint(0,20),betList,balanceList,roundPot)
+                matchPreviousBet(index,balanceList)
+                bet(index, random.randint(0,20),betList,balanceList)
             else:
                 standOrFold(index)
         elif chance == 3:
             if odds >=3:
-                bet(index, random.randint(0,10),betList,balanceList,roundPot)
+                matchPreviousBet(index,balanceList)
+                bet(index, random.randint(0,10),betList,balanceList)
             else:
                 standOrFold(index)
         elif chance == 2:
             if odds >=4:
-                bet(index, random.randint(0,10),betList,balanceList,roundPot)
+                matchPreviousBet(index,balanceList)
+                bet(index, random.randint(0,10),betList,balanceList)
             else:
                 standOrFold(index)
         elif chance == 1:
-            if odds >=4:
-                bet(index, random.randint(0,5),betList,balanceList,roundPot)
+            if odds >=5:
+                matchPreviousBet(index,balanceList)
+                bet(index, random.randint(0,5),betList,balanceList)
             else:
                 standOrFold(index)
         elif chance == 0:
             if odds >=6:
-                bet(index, random.randint(0,5),betList,balanceList,roundPot)
+                matchPreviousBet(index,balanceList)
+                print(betList)
+                bet(index, random.randint(0,5),betList,balanceList)
             else:
                 standOrFold(index)
                 
@@ -164,24 +192,28 @@ if __name__ == "__main__":
 
 
 
-
+    roundNum = 0
     while True:
-        roundPot = 0
+        
+        
+        print("bets:")
         print(betList)
+        print("balance:")
         print(balanceList)
+
         if roundNum == 0:
             print(hands[0])
-            next = input("'S'tand\n'H'it\n'F'old\n")
+            next = input("'S'tand\n'R'aise\n'F'old\n")
 
             if next.upper() == 'S':
                 print("Standing")
                 stand(0)
 
-            elif next.upper() == 'H':
-                print("Hitting")
+            elif next.upper() == 'R':
+                print("Raising")
                 wager = input("How much to increase bet? ")
                 print(balanceList)
-                bet(0, int(wager),betList,balanceList,roundPot)
+                bet(0, int(wager),betList,balanceList)
                 print(balanceList)
                 
 
@@ -191,15 +223,49 @@ if __name__ == "__main__":
 
             for i in range(1,NUMBER_OF_AI+1):
                 
-                odds = random.randint(0,10)
+                odds = random.randint(5,10)
                 print(hands[i])
                 chance = checkChances(hands[i],[])
                 time.sleep(2)
                 print("chance: " + str(chance))
                 print("odds: " + str(odds))
-                actionBasedOnHand(chance, i, odds)
-                
+                actionBasedOnHand(chance, i, odds, balanceList)
+                print("bets:")
+                print(betList)
+                print("balance:")
+                print(balanceList)
+
+                if getPreviousWager(i) > betList[i]:
                     
+                    print("AI HAS FOLDED")
+                
+                elif getPreviousWager(i) < betList[i]:
+
+                    print(hands[0])
+                    next = input("'M'atch\n'R'aise\n'F'old\n")
+
+                    if next.upper() == 'M':
+                        print("Matching")
+                        matchPreviousBet(0,balanceList)
+
+                    elif next.upper() == 'R':
+                        print("Raising")
+                        wager = input("How much to increase bet? ")
+                        print(balanceList)
+                        bet(0, int(wager),betList,balanceList)
+                        print(balanceList)
+                        
+
+                    elif next.upper() == 'F':
+                        print("Folding")
+                        fold(0)
+
+                print("bets:")
+                print(betList)
+                print("balance:")
+                print(balanceList)
+                
+                  
 
 
                 
